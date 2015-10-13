@@ -18,9 +18,14 @@ class Auth {
     const ANON = 'anonymous';
     
     /**
-     * User is not logged in
+     * User is idle
      */
     const IDLE = 'idle';
+    
+    /**
+     * User is expired
+     */
+    const EXPIRE = 'expire';
     
     /**
      * The adapter used to authenticate 
@@ -35,6 +40,7 @@ class Auth {
         $this->adapter = $adapter;
         $this->session = $session;
     }
+
     
     public function login($username, $password)
     {
@@ -44,20 +50,36 @@ class Auth {
             $userdata = $this->adapter->lookupUserData($username);
             $this->session->setUserData($userdata);
             $this->session->setUserName($username);
+            $this->session->setActiveTime(time());
         } else {
             $this->session->setStatus(Auth::INVALID);
         }
     }
     
-    public function logout()
+    public function logout($status = Auth::ANON)
     {
-        $this->session->init();
+        $this->session->init($status);
     }
     
     public function update()
     {
-        // used to update idle time etc
-        // need to get cookie lifetime etc.
+        if ($this->session->getStatus() == Auth::VALID) {
+            $idle = ini_get('session.gc_maxlifetime');
+            $expire = ini_get('session.cookie_lifetime');
+
+            $now = time();
+            if ( ($now - $this->session->getActiveTime()) >= $idle) {
+                $this->logout(Auth::IDLE);
+                return;
+            }
+            
+            if (($now - $this->session->getActiveTime()) >= $expire && $expire != 0) {
+                $this->logout(Auth::EXPIRE);
+                return;
+            }
+            
+            $this->session->setActiveTime($now);
+        }
     }
     
     public function getUserData()
@@ -72,6 +94,14 @@ class Auth {
     public function isValid()
     {
         return $this->session->getStatus() == Auth::VALID;
+    }
+    public function isIdle()
+    {
+        return $this->session->getStatus() == Auth::IDLE;
+    }
+    public function isExpired()
+    {
+        return $this->session->getStatus() == Auth::EXPIRE;
     }
     
     

@@ -17,11 +17,12 @@ class Session {
             $this->init();
         }
     }
-    public function init()
+    public function init($status = Auth::ANON)
     {
-        $this->setStatus(Auth::ANON);
+        $this->setStatus($status);
         $this->setUserName();
         $this->setUserData();
+        $this->setActiveTime();
     }
 
     public function setStatus($status)
@@ -50,6 +51,16 @@ class Session {
     public function setUserData($userdata = [])
     {
         $_SESSION[$this->key]['userdata'] = $userdata;
+    }
+    
+    public function setActiveTime($time = 0)
+    {
+        $_SESSION[$this->key]['activetime'] = $time;
+    }
+    
+    public function getActiveTime()
+    {
+        return $_SESSION[$this->key]['activetime'];
     }
     
     
