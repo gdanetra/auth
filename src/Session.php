@@ -15,10 +15,11 @@ class Session {
         
         if (! isset($_SESSION[$key]) || ! isset($_SESSION[$key]['status'])) {
             $this->init();
-        }
+        } 
     }
     public function init($status = Auth::ANON)
     {
+        echo "init";
         $this->setStatus($status);
         $this->setUserName();
         $this->setUserData();
