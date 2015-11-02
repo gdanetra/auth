@@ -6,26 +6,26 @@ class Auth {
     /**
      * User is valid
      */
-    const VALID = 'valid';
+    const VALID = 'VALID';
     /**
      * User is not valid
      */
-    const INVALID = 'invalid';
+    const INVALID = 'INVALID';
     
     /**
      * User is not logged in
      */
-    const ANON = 'anonymous';
+    const ANON = 'ANON';
     
     /**
      * User is idle
      */
-    const IDLE = 'idle';
+    const IDLE = 'IDLE';
     
     /**
      * User is expired
      */
-    const EXPIRE = 'expire';
+    const EXPIRED = 'EXPIRED';
     
     /**
      * The adapter used to authenticate 
@@ -45,64 +45,44 @@ class Auth {
     public function login($username, $password)
     {
         $valid = $this->adapter->authenticate($username, $password);
+        
         if ($valid) {
-            $this->session->setStatus(Auth::VALID);
-            $userdata = $this->adapter->lookupUserData($username);
-            $this->session->setUserData($userdata);
-            $this->session->setUserName($username);
-            $this->session->setActiveTime(time());
-        } else {
-            $this->session->setStatus(Auth::INVALID);
+        	// Set status
+        	$this->session->setStatus(Auth::VALID);
+        	
+        	// Set username
+        	$this->session->setUsername($username);
+        	
+        	// Set userdata
+        	$this->session->setUserdata($this->adapter->lookupUserData($username));	
         }
+        
     }
     
-    public function logout($status = Auth::ANON)
+    public function logout()
     {
-        $this->session->init($status);
-    }
-    
-    public function update()
-    {
-        if ($this->session->getStatus() == Auth::VALID) {
-            $idle = ini_get('session.gc_maxlifetime');
-            $expire = ini_get('session.cookie_lifetime');
-
-            $now = time();
-            if ( ($now - $this->session->getActiveTime()) >= $idle) {
-                $this->logout(Auth::IDLE);
-                return;
-            }
-            
-            if (($now - $this->session->getActiveTime()) >= $expire && $expire != 0) {
-                $this->logout(Auth::EXPIRE);
-                return;
-            }
-            
-            $this->session->setActiveTime($now);
-        }
-    }
-    
-    public function getUserData()
-    {
-        return $this->session->getUserData();
-    }
-    public function getUserName()
-    {
-        return $this->session->getUserName();
+        $this->session->setStatus(Auth::ANON);
+        $this->session->reset();
     }
     
     public function isValid()
     {
-        return $this->session->getStatus() == Auth::VALID;
+    	return $this->session->getStatus() == Auth::VALID;
     }
+    
+    public function isAnon()
+    {
+    	return $this->session->getStatus() == Auth::ANON;
+    }
+    
     public function isIdle()
     {
-        return $this->session->getStatus() == Auth::IDLE;
+    	return $this->session->getStatus() == Auth::IDLE;
     }
+    
     public function isExpired()
     {
-        return $this->session->getStatus() == Auth::EXPIRE;
+    	return $this->session->getStatus() == Auth::EXPIRED;
     }
-    
-    
+
 }

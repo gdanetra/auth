@@ -1,7 +1,7 @@
 <?php
 namespace Vespula\Auth\Adapter;
 
-class Text extends AbstractAdapter implements AdapterInterface {
+class Text implements AdapterInterface {
     
     protected $passwords = [];
 

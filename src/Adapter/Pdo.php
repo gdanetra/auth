@@ -1,7 +1,7 @@
 <?php
 namespace Vespula\Auth\Adapter;
 
-class Pdo extends AbstractAdapter implements AdapterInterface {
+class Pdo implements AdapterInterface {
     
     protected $pdo;
     protected $cols = [
