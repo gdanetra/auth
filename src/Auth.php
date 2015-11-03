@@ -70,7 +70,7 @@ class Auth {
      */
     public function login($username, $password)
     {
-        $valid = $this->adapter->authenticate($username, $password);
+    	$valid = $this->adapter->authenticate($username, $password);
         
         if ($valid) {
             // Set status

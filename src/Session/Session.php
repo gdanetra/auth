@@ -1,5 +1,6 @@
 <?php
 namespace Vespula\Auth\Session;
+use Vespula\Auth\Exception;
 
 class Session implements SessionInterface {
     
@@ -86,7 +87,7 @@ class Session implements SessionInterface {
         if ($idle !== null) {
             $idle = (int) $idle;
             if ($idle > ini_get('session.gc_maxlifetime')) {
-                throw new \Exception('Idle time greater than gc_maxlifetime');
+                throw new Exception('Idle time greater than gc_maxlifetime');
             }
             $this->idle = $idle;
         }
@@ -105,7 +106,7 @@ class Session implements SessionInterface {
             $expire = (int) $expire;
             $cookie_lifetime = ini_get('session.cookie_lifetime');
             if ($cookie_lifetime > 0 && $expire > $cookie_lifetime) {
-                throw new \Exception('Expire time greater than cookie_lifetime');
+                throw new Exception('Expire time greater than cookie_lifetime');
             }
             $this->expire = $expire;
         }

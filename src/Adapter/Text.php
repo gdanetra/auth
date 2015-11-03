@@ -4,6 +4,8 @@ namespace Vespula\Auth\Adapter;
 class Text implements AdapterInterface {
     
     protected $passwords = [];
+    
+    protected $userdata = [];
 
     public function setPassword($username, $password, $hash = PASSWORD_DEFAULT)
     {
@@ -17,13 +19,15 @@ class Text implements AdapterInterface {
         return password_verify($password, $this->passwords[$username]);
     }
     
+    public function setUserData($username, $data)
+    {
+    	$this->userdata[$username] = (array) $data;
+    }
+    
     
     public function lookupUserData($username)
     {
-        $userdata = [
-            'fullname' => 'Jon Elofson'
-        ];
-        return $userdata;
+        return array_key_exists($username, $this->userdata) ? $this->userdata[$username] : [];
     }
     
     

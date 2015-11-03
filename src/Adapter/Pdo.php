@@ -1,5 +1,6 @@
 <?php
 namespace Vespula\Auth\Adapter;
+use Vespula\Auth\Exception;
 
 class Pdo implements AdapterInterface {
     
@@ -26,24 +27,27 @@ class Pdo implements AdapterInterface {
     public function authenticate($username, $password)
     {
         $cols = $this->fixCols();
-        /*
-        $username_col = array_shift($this->cols);
-        $password_col = array_shift($this->cols);
-        $cols = implode(', ', $this->cols);
-        */
+
         $where = "username = :username";
         if ($this->where) {
             $where .= " AND $this->where";
         }
         $query = "SELECT $cols FROM {$this->from} WHERE $where LIMIT 1";
         $statement = $this->pdo->prepare($query);
-        $statement->execute([':username'=>$username]);
+        if (! $statement->execute([':username'=>$username])) {
+        	$error = $this->buildStatementError($statement->errorInfo());
+        	trigger_error($error, E_USER_WARNING);
+        	return false;
+        }
+
         $row = $statement->fetch(\PDO::FETCH_ASSOC);
+        
         if (! $row) {
-            return false;
+        	return false;
         }
         $this->row = $row;
         return password_verify($password, $row['password']);
+  
     }
     
     protected function fixCols()
@@ -51,10 +55,10 @@ class Pdo implements AdapterInterface {
         $cols = [];
 
         if (! in_array('username', $this->cols)) {
-            throw new \Exception('Missing username col');
+            throw new Exception('Missing username col');
         }
         if (! in_array('password', $this->cols)) {
-            throw new \Exception('Missing password col');
+            throw new Exception('Missing password col');
         }
 
         foreach ($this->cols as $key=>$col) {
@@ -68,6 +72,14 @@ class Pdo implements AdapterInterface {
         
     }
     
+    protected function buildStatementError($info)
+    {
+    	if (isset($info[2])) {
+    		return $info[2];
+    	}
+    	return 'SQLSTATE error code: ' . $info[0];
+    }
+    
     public function lookupUserData($username)
     {
         $info = [];
@@ -78,6 +90,11 @@ class Pdo implements AdapterInterface {
             }
         }
         return $info;
+    }
+    
+    public function getStatementError()
+    {
+    	return $this->statement_error;
     }
     
     
