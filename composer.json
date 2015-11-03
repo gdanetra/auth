@@ -1,0 +1,22 @@
+{
+    "name": "vespula/auth",
+    "description": "A library for authentication against various adapters",
+    "authors": [{
+        "name": "Jon Elofson",
+        "email": "jon.elofson@gmail.com",
+        "role": "Developer"
+    }],
+    "license": "MIT",
+    "keywords": ["authentication", "sql", "ldap"],
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vespula\\Auth\\": "src/"
+        }
+    }
+}
