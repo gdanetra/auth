@@ -1,7 +1,12 @@
 <?php
 namespace Vespula\Auth\Session;
 use Vespula\Auth\Exception;
-
+/**
+ * Session class for managing user data and auth status 
+ * 
+ * @author @author Jon Elofson <jon.elofson@gmail.com>
+ *
+ */
 class Session implements SessionInterface {
     
     /**

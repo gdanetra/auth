@@ -1,6 +1,12 @@
 <?php
 namespace Vespula\Auth\Session;
 
+/**
+ * Session Interface 
+ * 
+ * @author Jon Elofson <jon.elofson@gmail.com>
+ *
+ */
 interface SessionInterface {
 
     /**

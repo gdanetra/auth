@@ -3,6 +3,49 @@ namespace Vespula\Auth;
 use Vespula\Auth\Adapter\AdapterInterface;
 use Vespula\Auth\Session\SessionInterface;
 
+/**
+ * Simple authentication package with session management and adapter interfaces
+ * 
+ * <code>
+ * $adapter = new \Vespula\Auth\Adapter\Sql(...);
+ * $session = new \Vespula\Auth\Session\Session();
+ * $auth = new \Vespula\Auth\Auth($adapter, $session)
+ * 
+ * if ($something...) {
+ *     // filter these first
+ *     $credentials = [
+ *         'username'=>$_POST['username'],
+ *         'password'=>$_POST['password']
+ *     ];
+ *     $auth->login($credentials);
+ *     if ($auth->isValid()) {
+ *         // Yay....
+ *     } else {
+ *         // Nay....
+ *         // Wonder why? Any errors?
+ *         $error = $adapter->getError(); // may be no errors. Just bad creds
+ *     }
+ * }
+ * 
+ * if ($something...) {
+ *     $auth->logout();
+ * }
+ * 
+ * if ($auth->isValid()) {
+ *     // Access some part of site
+ * }
+ * 
+ * if ($auth->isIdle()) {
+ *     // Sitting around for too long
+ * }
+ * 
+ * if ($auth->isExpired()) {
+ *     // Sitting around way too long!
+ * }
+ * 
+ * @author Jon Elofson <jon.elofson@gmail.com>
+ *
+ */
 class Auth {
     
     /**
@@ -97,11 +140,21 @@ class Auth {
         $this->session->reset();
     }
     
+    /**
+     * Get the person's username
+     * 
+     * @return string
+     */
     public function getUsername()
     {
         return $this->session->getUsername();
     }
     
+    /**
+     * Get the user's userdata
+     * 
+     * @return array
+     */
     public function getUserdata()
     {
         return $this->session->getUserdata();
@@ -149,6 +202,8 @@ class Auth {
     
     /**
      * Check the session's data and see if the user has been idle too long or expired
+     * 
+     * Set the appropriate status in the session.
      */
     protected function checkIdleExpire()
     {
