@@ -154,6 +154,7 @@ class Auth {
      * Get the user's userdata
      * 
      * @return array
+     * @todo Pass an optional key to get a specific entry.
      */
     public function getUserdata()
     {

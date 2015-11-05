@@ -97,6 +97,7 @@ class Sql implements AdapterInterface {
      * 
      * {@inheritDoc}
      * @see \Vespula\Auth\Adapter\AdapterInterface::authenticate()
+     * @todo Use binding for the additional $where
      */
     public function authenticate(array $credentials)
     {

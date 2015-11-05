@@ -34,6 +34,13 @@ class Ldap implements AdapterInterface {
     protected $uri;
     
     /**
+     * Port to connect to
+     * 
+     * @var integer
+     */
+    protected $port;
+    
+    /**
      * The dn format, if known, for authenticating. If null, $bind_options must be set
      * 
      * Format like this 'cn=%s, OU=City,OU=Country'
@@ -88,20 +95,22 @@ class Ldap implements AdapterInterface {
     /**
      * Constructor
      * 
-     * @param string $uri
+     * @param string $uri ldap.mycompany.org
      * @param string $dn
      * @param array $bind_options Optional. Required if no $dn
      * @param array $ldap_options Optional LDAP options 
      * @param array $attributes Attributes to retrieve from AD and populate $userdata
+     * @param integer $port The port number. Default 389
      * @throws Exception
      */
-    public function __construct($uri, $dn = null, $bind_options = null, $ldap_options = null, $attributes= null)
+    public function __construct($uri, $dn = null, $bind_options = null, $ldap_options = null, $attributes= null, $port = 389)
     {
         if (! extension_loaded('ldap')) {
             throw new Exception('LDAP extension not loaded');
         }
 
         $this->uri = $uri;
+        $this->port = (int) $port;
         $this->dn = $dn;
         $this->bind_options = (array) $bind_options;
         $this->ldap_options = (array) $ldap_options;
@@ -124,7 +133,7 @@ class Ldap implements AdapterInterface {
             return false;
         }
 
-        $this->conn = ldap_connect($this->uri);
+        $this->conn = ldap_connect($this->uri, $this->port);
         
         if (! $this->conn) {
             throw new Exception('Could not bind to ldap server');
