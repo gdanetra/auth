@@ -5,28 +5,24 @@ use Vespula\Auth\Exception;
 class Pdo implements AdapterInterface {
     
     protected $pdo;
-    protected $cols = [
-        'username',
-        'bcryptpass'=>'password'
-    ];
+    protected $cols = [];
     protected $from;
     protected $where;
-    protected $row = [];
+    protected $userdata = [];
+    protected $error;
     
-    public function __construct(\Pdo $pdo, $from, $where = null)
+    public function __construct(\Pdo $pdo, $from, $cols, $where = null)
     {
         $this->pdo = $pdo;
         $this->from = $from;
+        $this->cols = $cols;
         $this->where = $where;
     }
     
-    public function setCols($cols = [])
-    {
-        $this->cols = $cols;
-    }
+    
     public function authenticate($username, $password)
     {
-        $cols = $this->fixCols();
+    	$cols = $this->fixCols();
 
         $where = "username = :username";
         if ($this->where) {
@@ -36,6 +32,7 @@ class Pdo implements AdapterInterface {
         $statement = $this->pdo->prepare($query);
         if (! $statement->execute([':username'=>$username])) {
         	$error = $this->buildStatementError($statement->errorInfo());
+        	$this->error = $error;
         	trigger_error($error, E_USER_WARNING);
         	return false;
         }
@@ -45,9 +42,14 @@ class Pdo implements AdapterInterface {
         if (! $row) {
         	return false;
         }
-        $this->row = $row;
+        $this->userdata = $row;
         return password_verify($password, $row['password']);
   
+    }
+    
+    public function getError()
+    {
+    	return $this->error;
     }
     
     protected function fixCols()
@@ -84,18 +86,12 @@ class Pdo implements AdapterInterface {
     {
         $info = [];
         $ignore = ['username', 'password'];
-        foreach ($this->row as $key=>$val) {
+        foreach ($this->userdata as $key=>$val) {
             if (! in_array($key, $ignore)) {
                 $info[$key] = $val;
             }
         }
         return $info;
     }
-    
-    public function getStatementError()
-    {
-    	return $this->statement_error;
-    }
-    
-    
+
 }

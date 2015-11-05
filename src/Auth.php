@@ -11,11 +11,6 @@ class Auth {
     const VALID = 'VALID';
     
     /**
-     * User is not valid
-     */
-    const INVALID = 'INVALID';
-    
-    /**
      * User is not logged in
      */
     const ANON = 'ANON';
@@ -81,9 +76,13 @@ class Auth {
             
             // Set userdata
             $this->session->setUserdata($this->adapter->lookupUserData($username));    
+        } else {
+        	// Make sure the user is not valid if they tried to login and creds were wrong.
+        	$this->logout();
         }
         
     }
+   
     
     /**
      * Logout. Sets the status to ANON and clears session data
@@ -92,6 +91,16 @@ class Auth {
     {
         $this->session->setStatus(Auth::ANON);
         $this->session->reset();
+    }
+    
+    public function getUsername()
+    {
+    	return $this->session->getUsername();
+    }
+    
+    public function getUserdata()
+    {
+    	return $this->session->getUserdata();
     }
     
     /**

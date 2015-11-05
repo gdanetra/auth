@@ -13,12 +13,13 @@ interface AdapterInterface {
     public function authenticate($username, $password);
     
     /**
-     * Find extra userdata by username. This will be stored in the session
+     * Find extra userdata. This will be stored in the session
      * 
-     * @param string $username
      * @return array
      */
     public function lookupUserData($username);
+    
+    public function getError();
 
     
 }
