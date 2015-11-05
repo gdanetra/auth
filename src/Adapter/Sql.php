@@ -2,7 +2,9 @@
 namespace Vespula\Auth\Adapter;
 use Vespula\Auth\Exception;
 
-class Pdo implements AdapterInterface {
+class Sql implements AdapterInterface {
+    
+    const ERROR_NO_ROWS = 'ERROR_NO_ROWS';
     
     protected $pdo;
     protected $cols = [];
@@ -20,9 +22,11 @@ class Pdo implements AdapterInterface {
     }
     
     
-    public function authenticate($username, $password)
+    public function authenticate($credentials)
     {
-    	$cols = $this->fixCols();
+        extract($credentials);
+        
+        $cols = $this->fixCols();
 
         $where = "username = :username";
         if ($this->where) {
@@ -31,16 +35,15 @@ class Pdo implements AdapterInterface {
         $query = "SELECT $cols FROM {$this->from} WHERE $where LIMIT 1";
         $statement = $this->pdo->prepare($query);
         if (! $statement->execute([':username'=>$username])) {
-        	$error = $this->buildStatementError($statement->errorInfo());
-        	$this->error = $error;
-        	trigger_error($error, E_USER_WARNING);
-        	return false;
+            $error = $this->buildStatementError($statement->errorInfo());
+            throw new Exception($error);
         }
 
         $row = $statement->fetch(\PDO::FETCH_ASSOC);
         
         if (! $row) {
-        	return false;
+            $this->error = Sql::ERROR_NO_ROWS;
+            return false;
         }
         $this->userdata = $row;
         return password_verify($password, $row['password']);
@@ -49,7 +52,7 @@ class Pdo implements AdapterInterface {
     
     public function getError()
     {
-    	return $this->error;
+        return $this->error;
     }
     
     protected function fixCols()
@@ -76,10 +79,10 @@ class Pdo implements AdapterInterface {
     
     protected function buildStatementError($info)
     {
-    	if (isset($info[2])) {
-    		return $info[2];
-    	}
-    	return 'SQLSTATE error code: ' . $info[0];
+        if (isset($info[2])) {
+            return $info[2];
+        }
+        return 'SQLSTATE error code: ' . $info[0];
     }
     
     public function lookupUserData($username)

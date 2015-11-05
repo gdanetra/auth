@@ -49,36 +49,40 @@ class Auth {
         $this->adapter = $adapter;
         $this->session = $session;
         if ($this->session->getStatus() == null) {
-        	$this->session->setStatus(Auth::ANON);
+            $this->session->setStatus(Auth::ANON);
         }
         
         if ($this->session->getStatus() == Auth::VALID) {
             $this->checkIdleExpire();
         }
     }
-	
+    
     /**
      * Login using the adapter's authenticate method
      * 
-     * @param string $username
+     * @param array $credentials Array with keys `username` and `password`.
      * @param string $password
      */
-    public function login($username, $password)
+    public function login($credentials)
     {
-    	$valid = $this->adapter->authenticate($username, $password);
+        if (! array_key_exists('username', $credentials) || ! array_key_exists('password', $credentials)) {
+            throw new Exception('Invalid credentials array. Must have keys `username` and `password`.');
+        }
+        
+        $valid = $this->adapter->authenticate($credentials);
         
         if ($valid) {
             // Set status
             $this->session->setStatus(Auth::VALID);
             
             // Set username
-            $this->session->setUsername($username);
+            $this->session->setUsername($credentials['username']);
             
             // Set userdata
-            $this->session->setUserdata($this->adapter->lookupUserData($username));    
+            $this->session->setUserdata($this->adapter->lookupUserData($credentials['username']));    
         } else {
-        	// Make sure the user is not valid if they tried to login and creds were wrong.
-        	$this->logout();
+            // Make sure the user is not valid if they tried to login and creds were wrong.
+            $this->logout();
         }
         
     }
@@ -95,12 +99,12 @@ class Auth {
     
     public function getUsername()
     {
-    	return $this->session->getUsername();
+        return $this->session->getUsername();
     }
     
     public function getUserdata()
     {
-    	return $this->session->getUserdata();
+        return $this->session->getUserdata();
     }
     
     /**
