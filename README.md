@@ -123,10 +123,11 @@ Under the hood, it uses `password_verify()`.
 
 ```
 // user table //
++----------+-------------+------------+---------------------+
 | username | fullname    | email      | bcryptpass          |
 |----------+-------------+------------+---------------------|
 | juser    | Joe User    | juser@...  | $2y$.............   |
-|----------+-------------+------------+---------------------|
++----------+-------------+------------+---------------------+
 
 ```
 
@@ -224,7 +225,7 @@ if ('logout link clicked') {
 }
 ```
 
-**Example 1: Unknown DN format**
+**Example 2: Unknown DN format**
 
 ```
 <?php 
@@ -276,4 +277,3 @@ if ('logout link clicked') {
     // $auth->isAnon() should return true
 }
 ```
-
