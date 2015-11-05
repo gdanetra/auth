@@ -110,6 +110,8 @@ if ('login button pushed logic') {
         $userdata = $auth->getUserdata();
         echo 'Hello, ' . $auth->getUsername();
         echo 'Your fullname is ' . $userdata['fullname'];
+        // Or...
+        echo 'Your fullname is ' . $auth->getUserdata('fullname');
 
     } else {
         // no luck, bad password or username
@@ -170,6 +172,8 @@ if ('login button pushed logic') {
         $userdata = $auth->getUserdata();
         echo 'Hello, ' . $auth->getUsername();
         echo 'Your fullname is ' . $userdata['full_name']; // note the use of the alias (not fullname)
+        // Or...
+        echo 'Your fullname is ' . $auth->getUserdata('fullname');
     } else {
         // no luck, bad password or username
     }
@@ -220,6 +224,8 @@ if ('login button pushed logic') {
         $userdata = $auth->getUserdata();
         echo 'Hello, ' . $auth->getUsername();
         echo 'Your fullname is ' . $userdata['givenname'];
+        // Or...
+        echo 'Your fullname is ' . $auth->getUserdata('givenname');
     } else {
         // no luck, bad password or username
     }
@@ -273,6 +279,8 @@ if ('login button pushed logic') {
         $userdata = $auth->getUserdata();
         echo 'Hello, ' . $auth->getUsername();
         echo 'Your fullname is ' . $userdata['givenname'];
+        // Or...
+        echo 'Your fullname is ' . $auth->getUserdata('givenname');
     } else {
         // no luck, bad password or username
     }
