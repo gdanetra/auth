@@ -154,10 +154,13 @@ class Auth {
      * Get the user's userdata
      * 
      * @return array
-     * @todo Pass an optional key to get a specific entry.
      */
-    public function getUserdata()
+    public function getUserdata($key = null)
     {
+        $userdata = $this->session->getUserdata();
+        if ($key && array_key_exists($key, $userdata)) {
+            return $userdata[$key];
+        }
         return $this->session->getUserdata();
     }
     
