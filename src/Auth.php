@@ -184,21 +184,35 @@ class Auth {
     /**
      * Is the user idle?
      * 
+     * Note, this will automatically log the person out if true and set the status to ANON
+     * 
      * @return boolean
      */
     public function isIdle()
     {
-        return $this->session->getStatus() == Auth::IDLE;
+        $idle = $this->session->getStatus() == Auth::IDLE;
+        if ($idle) {
+            $this->logout();
+            return true;
+        }
+        return false;
     }
     
     /**
      * Did the user's session expire?
      * 
+     * Note, this will automatically log the person out if true and set the status to ANON
+     * 
      * @return boolean
      */
     public function isExpired()
     {
-        return $this->session->getStatus() == Auth::EXPIRED;
+        $expired = $this->session->getStatus() == Auth::EXPIRED;
+        if ($expired) {
+            $this->logout();
+            return true;
+        }
+        return false;
     }
     
     /**
