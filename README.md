@@ -15,7 +15,7 @@ Clone or download and make available as you see fit. It's PSR-4 compliant so you
 {
     "autoload": {
         "psr-4": {
-        "Vespula\\": "your/path"
+        "Vespula\\Auth\\": "your/path"
         }
     }
 }
