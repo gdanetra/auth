@@ -64,10 +64,12 @@ if ($auth->isValid()) {
 
 if ($auth->isIdle()) {
     // Sitting around for too long
+    // User is automatically logged out and status set to ANON
 }
  
 if ($auth->isExpired()) {
     // Sitting around way too long!
+    // User is automatically logged out and status set to ANON
 }
 ```
 
