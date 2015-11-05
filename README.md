@@ -197,7 +197,7 @@ $attributes = [
     'givenname'
 ];
 
-$adapter = new \Vespula\Auth\Adapter\Sql($uri, $dn, null, $ldap_options, $attributes);
+$adapter = new \Vespula\Auth\Adapter\Ldap($uri, $dn, null, $ldap_options, $attributes);
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
 if ('login button pushed logic') {
@@ -250,7 +250,7 @@ $attributes = [
     'givenname'
 ];
 
-$adapter = new \Vespula\Auth\Adapter\Sql($uri, null, $bind_options, $ldap_options, $attributes);
+$adapter = new \Vespula\Auth\Adapter\Ldap($uri, null, $bind_options, $ldap_options, $attributes);
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
 if ('login button pushed logic') {
