@@ -45,7 +45,12 @@ if ($something...) {
     $auth->login($credentials);
     if ($auth->isValid()) {
         // Yay....
-        echo "Welome";
+        echo "Welome " . $auth->getUsername();
+        // Get userdata
+        $userdata = $auth->getUserdata();
+        echo $userdata['fullname'];
+        // Shortcut to userdata
+        echo $auth->getUserdata('fullname');
     } else {
         // Nay....
         // Wonder why? Any errors?
