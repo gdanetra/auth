@@ -103,7 +103,7 @@ class Ldap implements AdapterInterface {
      * @param integer $port The port number. Default 389
      * @throws Exception
      */
-    public function __construct($uri, $dn = null, $bind_options = null, $ldap_options = null, $attributes= null, $port = 389)
+    public function __construct($uri, $dn = null, $bind_options = null, $ldap_options = null, $attributes = null, $port = 389)
     {
         if (! extension_loaded('ldap')) {
             throw new Exception('LDAP extension not loaded');
@@ -116,6 +116,7 @@ class Ldap implements AdapterInterface {
         $this->ldap_options = (array) $ldap_options;
         $this->attributes = (array) $attributes;
     }
+    
     
     /**
      * 
