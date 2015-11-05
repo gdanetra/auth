@@ -76,7 +76,9 @@ class Ldap implements AdapterInterface {
         $resource = ldap_search($this->conn, $this->dn, $dn_parts[0], $this->attributes);
         if ($resource) {
             $entry = ldap_first_entry($this->conn, $resource);
-            $userdata = $this->parseUserAttribs($this->conn, $entry, $this->attributes);
+            if ($entry !== false) {
+                $userdata = $this->parseUserAttribs($this->conn, $entry, $this->attributes);
+            }
         }
         ldap_unbind($this->conn);
         return $userdata;
