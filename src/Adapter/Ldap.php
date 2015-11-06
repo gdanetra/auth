@@ -126,20 +126,16 @@ class Ldap implements AdapterInterface {
     public function authenticate(array $credentials) 
     {
         extract($credentials);
-        
         if (empty($username)) {
             return false;
         }
         if (empty($password)) {
             return false;
         }
-
-        $this->conn = ldap_connect($this->uri, $this->port);
         
-        if (! $this->conn) {
-            throw new Exception('Could not bind to ldap server');
-        }
-       
+
+        $this->conn = $this->ldap_connect($this->uri, $this->port);
+        
         $this->setLdapOptions($this->conn, $this->ldap_options);
         
         $username = addcslashes($username, '\\&!|=<>,+-"\';*');
@@ -163,7 +159,7 @@ class Ldap implements AdapterInterface {
         // Suppress the warning here so that even in dev environments, we don't see it.
         // I don't want a warning if they type their password in wrong.
         // All other ldap functions should output appropriate warnings if enabled.
-        $bind = @ldap_bind($this->conn, $this->dn, $password);
+        $bind = $this->ldap_bind($this->conn, $this->dn, $password);
         return $bind;
     }
     
@@ -195,6 +191,20 @@ class Ldap implements AdapterInterface {
     public function getError()
     {
         return $this->error;
+    }
+    
+    protected function ldap_connect($uri, $port)
+    {
+        $conn = ldap_connect($uri, $port);
+        if (! $conn) {
+            throw new Exception('EXCEPTION_LDAP_CONNECT_FAILED');
+        }
+        return $conn;
+    }
+    
+    protected function ldap_bind($conn, $dn, $password)
+    {
+        return ldap_bind($conn, $dn, $password);
     }
     
     

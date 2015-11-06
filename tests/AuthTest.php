@@ -5,8 +5,6 @@ use \Vespula\Auth\Adapter\Text;
 
 class AuthTest extends \PHPUnit_Framework_TestCase {
 	
-	///  MOCK OBJECTS?? ///
-	
 	protected $auth;
 	protected $session;
 	protected $adapter;
@@ -28,7 +26,11 @@ class AuthTest extends \PHPUnit_Framework_TestCase {
 
 	public function testLogin()
 	{
-		$this->auth->login('juser', 'password');
+		$credentials = [
+		    'username'=>'juser',
+		    'password'=>'password'
+		];
+	    $this->auth->login($credentials);
 		$status = $this->session->getStatus();
 		$this->assertEquals($status, Auth::VALID);
 		
@@ -38,16 +40,26 @@ class AuthTest extends \PHPUnit_Framework_TestCase {
 	
 	public function testLoginFailed()
 	{
-		$this->session->setStatus(Auth::ANON);
+	    $credentials = [
+            'username'=>'juser',
+            'password'=>'------'
+	    ];
+	    
+	    $this->session->setStatus(Auth::ANON);
 		$this->session->reset();
-		$this->auth->login('juser', '-------');
+		$this->auth->login($credentials);
 		$status = $this->session->getStatus();
 		$this->assertEquals($status, Auth::ANON);
 	}
 	
 	public function testLogout()
 	{
-		$this->auth->login('juser', 'password');
+	    $credentials = [
+            'username'=>'juser',
+            'password'=>'password'
+	    ];
+	    
+	    $this->auth->login($credentials);
 		$this->auth->logout();
 		
 		$this->assertEquals(Auth::ANON, $this->session->getStatus());
