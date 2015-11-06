@@ -132,4 +132,32 @@ class LdapTest extends \PHPUnit_Framework_TestCase {
         
         $this->assertTrue($adapter->authenticate($credentials));
     }
+    
+    public function testAuthenticateDnFail()
+    {
+        $credentials = [
+            'username'=>'juser',
+            'password'=>'ssllsslls'
+        ];
+        
+        $adapter = $this->getMock('\Vespula\Auth\Adapter\Ldap', $this->methods, $this->params_dn);
+                
+        $adapter->expects($this->once())
+                ->method('connect')
+                ->with('ldap.mycompany.org', '389')
+                ->will($this->returnValue(true));
+        
+        $adapter->expects($this->once())
+                ->method('bindQuietly')
+                ->with(true, 'cn=juser,OU=MyCompany,OU=City,OU=Province', 'ssllsslls')
+                ->will($this->returnValue(false));        
+        
+        $adapter->expects($this->any())
+                ->method('setLdapOptions')
+                ->will($this->returnValue(true));
+        
+        
+        
+        $this->assertFalse($adapter->authenticate($credentials));
+    }
 }
