@@ -171,15 +171,15 @@ class Ldap implements AdapterInterface {
     public function lookupUserData($username)
     {
         $userdata = [];
-        $dn_parts = ldap_explode_dn($this->dn, 0);
-        $resource = ldap_search($this->conn, $this->dn, $dn_parts[0], $this->attributes);
+        $dn_parts = $this->ldap_explode_dn($this->dn, 0);
+        $resource = $this->ldap_search($this->conn, $this->dn, $dn_parts[0], $this->attributes);
         if ($resource) {
-            $entry = ldap_first_entry($this->conn, $resource);
+            $entry = $this->ldap_first_entry($this->conn, $resource);
             if ($entry !== false) {
                 $userdata = $this->parseUserAttribs($this->conn, $entry, $this->attributes);
             }
         }
-        ldap_unbind($this->conn);
+        $this->ldap_unbind($this->conn);
         return $userdata;
     }
     
@@ -193,21 +193,6 @@ class Ldap implements AdapterInterface {
         return $this->error;
     }
     
-    protected function ldap_connect($uri, $port)
-    {
-        $conn = ldap_connect($uri, $port);
-        if (! $conn) {
-            throw new Exception('EXCEPTION_LDAP_CONNECT_FAILED');
-        }
-        return $conn;
-    }
-    
-    protected function ldap_bind($conn, $dn, $password)
-    {
-        return ldap_bind($conn, $dn, $password);
-    }
-    
-    
     /**
      * Parse returned entry and make the userdata more friendly
      * 
@@ -220,7 +205,7 @@ class Ldap implements AdapterInterface {
     {
         $userdata = [];
         foreach ($attribs as $attrib) {
-            $vals = ldap_get_values($conn, $entry, $attrib);
+            $vals = $this->ldap_get_values($conn, $entry, $attrib);
             $count = array_pop($vals);
             if ($count == 1) {
                 $userdata[$attrib] = $vals[0];
@@ -273,22 +258,22 @@ class Ldap implements AdapterInterface {
         $dn = false;
         extract($bind_options);
 
-        $bind = ldap_bind($conn, $binddn, $bindpw);
+        $bind = $this->ldap_bind($conn, $binddn, $bindpw);
         if (! $bind) {
             throw new Exception('Could not bind to basedn');
         }
     
         $searchfilter = sprintf($filter, $username);
 
-        $resource = ldap_search($conn, $basedn, $searchfilter);
+        $resource = $this->ldap_search($conn, $basedn, $searchfilter);
     
         if ($resource === false) {
             throw new Exception('The LDAP DN search failed');
         }
         
-        $first = ldap_first_entry($conn, $resource);
+        $first = $this->ldap_first_entry($conn, $resource);
         if ($first !== false) {
-            $dn = ldap_get_dn($conn, $first);
+            $dn = $this->ldap_get_dn($conn, $first);
         }
         return $dn;
     }
@@ -304,5 +289,49 @@ class Ldap implements AdapterInterface {
         foreach ($options as $option=>$value) {
             ldap_set_option($conn, $option, $value);
         }
+    }
+    
+    protected function ldap_connect($uri, $port)
+    {
+        $conn = ldap_connect($uri, $port);
+        if (! $conn) {
+            throw new Exception('EXCEPTION_LDAP_CONNECT_FAILED');
+        }
+        return $conn;
+    }
+    
+    protected function ldap_bind($conn, $dn, $password)
+    {
+        return ldap_bind($conn, $dn, $password);
+    }
+    
+    protected function ldap_search($conn, $basedn, $searchfilter)
+    {
+        return ldap_search($conn, $basedn, $searchfilter);
+    }
+    
+    protected function ldap_get_values($conn, $entry, $attrib)
+    {
+        return ldap_get_values($conn, $entry, $attrib);
+    }
+    
+    protected function ldap_first_entry($conn, $resource)
+    {
+        return ldap_first_entry($conn, $resource);
+    }
+    
+    protected function ldap_get_dn($conn, $first)
+    {
+        return ldap_get_dn($conn, $first);
+    }
+    
+    protected function ldap_explode_dn($dn, $with_attrib)
+    {
+        return ldap_explode_dn($dn, $with_attrib);
+    }
+    
+    protected function ldap_unbind($conn)
+    {
+        return ldap_unbind($conn);
     }
 }
