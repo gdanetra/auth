@@ -134,7 +134,7 @@ class Ldap implements AdapterInterface {
         }
         
 
-        $this->conn = $this->ldap_connect($this->uri, $this->port);
+        $this->conn = $this->connect($this->uri, $this->port);
         
         $this->setLdapOptions($this->conn, $this->ldap_options);
         
@@ -159,7 +159,7 @@ class Ldap implements AdapterInterface {
         // Suppress the warning here so that even in dev environments, we don't see it.
         // I don't want a warning if they type their password in wrong.
         // All other ldap functions should output appropriate warnings if enabled.
-        $bind = $this->ldap_bind($this->conn, $this->dn, $password);
+        $bind = $this->bindQuietly($this->conn, $this->dn, $password);
         return $bind;
     }
     
@@ -171,15 +171,15 @@ class Ldap implements AdapterInterface {
     public function lookupUserData($username)
     {
         $userdata = [];
-        $dn_parts = $this->ldap_explode_dn($this->dn, 0);
-        $resource = $this->ldap_search($this->conn, $this->dn, $dn_parts[0], $this->attributes);
+        $dn_parts = $this->explodeDn($this->dn, 0);
+        $resource = $this->search($this->conn, $this->dn, $dn_parts[0], $this->attributes);
         if ($resource) {
-            $entry = $this->ldap_first_entry($this->conn, $resource);
+            $entry = $this->firstEntry($this->conn, $resource);
             if ($entry !== false) {
                 $userdata = $this->parseUserAttribs($this->conn, $entry, $this->attributes);
             }
         }
-        $this->ldap_unbind($this->conn);
+        $this->unbind($this->conn);
         return $userdata;
     }
     
@@ -205,7 +205,7 @@ class Ldap implements AdapterInterface {
     {
         $userdata = [];
         foreach ($attribs as $attrib) {
-            $vals = $this->ldap_get_values($conn, $entry, $attrib);
+            $vals = $this->getValues($conn, $entry, $attrib);
             $count = array_pop($vals);
             if ($count == 1) {
                 $userdata[$attrib] = $vals[0];
@@ -258,22 +258,22 @@ class Ldap implements AdapterInterface {
         $dn = false;
         extract($bind_options);
 
-        $bind = $this->ldap_bind($conn, $binddn, $bindpw);
+        $bind = $this->bind($conn, $binddn, $bindpw);
         if (! $bind) {
             throw new Exception('Could not bind to basedn');
         }
     
         $searchfilter = sprintf($filter, $username);
 
-        $resource = $this->ldap_search($conn, $basedn, $searchfilter);
+        $resource = $this->search($conn, $basedn, $searchfilter);
     
         if ($resource === false) {
             throw new Exception('The LDAP DN search failed');
         }
         
-        $first = $this->ldap_first_entry($conn, $resource);
+        $first = $this->firstEntry($conn, $resource);
         if ($first !== false) {
-            $dn = $this->ldap_get_dn($conn, $first);
+            $dn = $this->getUserDn($conn, $first);
         }
         return $dn;
     }
@@ -291,7 +291,15 @@ class Ldap implements AdapterInterface {
         }
     }
     
-    protected function ldap_connect($uri, $port)
+    /**
+     * The following methods are wrappers around native ldap functions.
+     * These are here to make testing the class easier as you can mock 
+     * these methods via PHPUnit.
+     * 
+     */
+    
+    
+    protected function connect($uri, $port)
     {
         $conn = ldap_connect($uri, $port);
         if (! $conn) {
@@ -300,37 +308,43 @@ class Ldap implements AdapterInterface {
         return $conn;
     }
     
-    protected function ldap_bind($conn, $dn, $password)
+    protected function bind($conn, $dn, $password, $quiet = false)
     {
         return ldap_bind($conn, $dn, $password);
     }
     
-    protected function ldap_search($conn, $basedn, $searchfilter)
+    protected function bindQuietly($conn, $dn, $password)
+    {
+
+        return @ldap_bind($conn, $dn, $password);
+    }
+    
+    protected function search($conn, $basedn, $searchfilter)
     {
         return ldap_search($conn, $basedn, $searchfilter);
     }
     
-    protected function ldap_get_values($conn, $entry, $attrib)
+    protected function getValues($conn, $entry, $attrib)
     {
         return ldap_get_values($conn, $entry, $attrib);
     }
     
-    protected function ldap_first_entry($conn, $resource)
+    protected function firstEntry($conn, $resource)
     {
         return ldap_first_entry($conn, $resource);
     }
     
-    protected function ldap_get_dn($conn, $first)
+    protected function getUserDn($conn, $first)
     {
         return ldap_get_dn($conn, $first);
     }
     
-    protected function ldap_explode_dn($dn, $with_attrib)
+    protected function explodeDn($dn, $with_attrib)
     {
-        return ldap_explode_dn($dn, $with_attrib);
+        return explode_dn($dn, $with_attrib);
     }
     
-    protected function ldap_unbind($conn)
+    protected function unbind($conn)
     {
         return ldap_unbind($conn);
     }
