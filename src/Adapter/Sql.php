@@ -16,6 +16,8 @@ class Sql implements AdapterInterface {
      * @var string
      */
     const ERROR_NO_ROWS = 'ERROR_NO_ROWS';
+    const ERROR_USERNAME_COL = 'ERROR_USERNAME_COL';
+    const ERROR_PASSWORD_COL = 'ERROR_PASSWORD_COL';
     
     /**
      * a \PDO object
@@ -101,7 +103,8 @@ class Sql implements AdapterInterface {
      */
     public function authenticate(array $credentials)
     {
-        extract($credentials);
+        $username = $credentials['username'];
+        $password = $credentials['password'];
         
         $cols = $this->fixCols();
 
@@ -110,13 +113,18 @@ class Sql implements AdapterInterface {
             $where .= " AND $this->where";
         }
         $query = "SELECT $cols FROM {$this->from} WHERE $where LIMIT 1";
+        
+        // If PDO::ATTR_ERRMODE is set to PDO::ERRMODE_EXCEPTION, a PDOException will be thrown
         $statement = $this->pdo->prepare($query);
-        if (! $statement->execute([':username'=>$username])) {
-            $error = $this->buildStatementError($statement->errorInfo());
-            throw new Exception($error);
-        }
 
-        $row = $statement->fetch(\PDO::FETCH_ASSOC);
+        if ($statement === false) {
+            throw new Exception();
+        }
+        
+        $row = false;
+        if ($statement->execute([':username'=>$username])) {
+            $row = $statement->fetch(\PDO::FETCH_ASSOC);
+        }
         
         // Simple debugging info (could not find the user in the table based on the where clause)
         if (! $row) {
@@ -166,10 +174,10 @@ class Sql implements AdapterInterface {
         $cols = [];
 
         if (! in_array('username', $this->cols)) {
-            throw new Exception('Missing username col');
+            throw new Exception(Sql::ERROR_USERNAME_COL);
         }
         if (! in_array('password', $this->cols)) {
-            throw new Exception('Missing password col');
+            throw new Exception(Sql::ERROR_PASSWORD_COL);
         }
 
         foreach ($this->cols as $key=>$col) {

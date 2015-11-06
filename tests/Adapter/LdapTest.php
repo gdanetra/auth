@@ -1,6 +1,7 @@
 <?php
+namespace Vespula\Auth\Adapter;
 
-class LdapAdapterTest extends \PHPUnit_Framework_TestCase {
+class LdapTest extends \PHPUnit_Framework_TestCase {
     
     protected $methods;
     protected $params_dn;

@@ -1,4 +1,6 @@
 <?php
+namespace Vespula\Auth\Session;
+
 use Vespula\Auth\Session\SessionInterface;
 use Vespula\Auth\Auth;
 class MockSession implements SessionInterface {
@@ -13,7 +15,6 @@ class MockSession implements SessionInterface {
 	{
 		$this->idle = $idle;
 		$this->expire = $expire;
-
 	}
 	
 	public function getStatus()

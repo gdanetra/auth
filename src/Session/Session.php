@@ -43,6 +43,7 @@ class Session implements SessionInterface {
      * 
      * @param integer $idle Set an idle max time allowed. 0 for no max.
      * @param integer $expire Set the time when session expires. 0 for no expire.
+     * @todo Add third arg to specify a key. Defaults to __CLASS__
      */
     public function __construct($idle = null, $expire = null)
     {
@@ -98,6 +99,11 @@ class Session implements SessionInterface {
         }
     }
     
+    public function getIdle()
+    {
+        return $this->idle;
+    }
+    
     /**
      * Set the max time before expiry. Must not be greater than session.cookie_lifetime
      * 
@@ -115,6 +121,11 @@ class Session implements SessionInterface {
             }
             $this->expire = $expire;
         }
+    }
+    
+    public function getExpire()
+    {
+        return $this->expire;
     }
     
     /**
@@ -148,25 +159,6 @@ class Session implements SessionInterface {
         $this->store['userdata'] = null;
     }
     
-    /**
-     * Get the current timestamp (time of current request)
-     * 
-     * @return integer
-     */
-    public function getTimestamp()
-    {
-        return $this->store['timestamp'];
-    }
-    
-    /**
-     * Get the time since last request
-     * 
-     * @return integer
-     */
-    public function getInterval()
-    {
-        return $this->store['interval'];
-    }
     
     /**
      * {@inheritDoc}
