@@ -125,7 +125,9 @@ class Ldap implements AdapterInterface {
      */
     public function authenticate(array $credentials) 
     {
-        extract($credentials);
+        $username = $credentials['username'];
+        $password = $credentials['password'];
+        
         if (empty($username)) {
             return false;
         }
@@ -298,7 +300,14 @@ class Ldap implements AdapterInterface {
      * 
      */
     
-    
+    /**
+     * Connect to ldap server
+     * 
+     * @param string $uri
+     * @param int $port
+     * @return resource Link identifier
+     * @throws Exception
+     */
     protected function connect($uri, $port)
     {
         $conn = ldap_connect($uri, $port);
@@ -308,42 +317,108 @@ class Ldap implements AdapterInterface {
         return $conn;
     }
     
-    protected function bind($conn, $dn, $password, $quiet = false)
+    /**
+     * Bind to an ldap server
+     * 
+     * @param resource $conn Link identifier
+     * @param string $dn
+     * @param string $password
+     * @return resource
+     */
+    protected function bind($conn, $dn, $password)
     {
         return ldap_bind($conn, $dn, $password);
     }
     
+    /**
+     * Bind to and ldap server but suppress warnings. 
+     * Allow this to happen because we don't care (ever) if a bind
+     * failed, especially due to a bad username and password. Normally, we don't
+     * want to suppress thses and use ini settings to do that, 
+     * but in this case, it's ok.
+     * 
+     * @param resource $conn Link identifier
+     * @param string $dn
+     * @param string $password
+     * @return resource
+     */
     protected function bindQuietly($conn, $dn, $password)
     {
-
         return @ldap_bind($conn, $dn, $password);
     }
     
+    /**
+     * Search the base dn for a user matching the search filter. This should be 
+     * unique to the user and must match by the user's userid passed to 
+     * authenticate
+     * 
+     * @param resource $conn Link identifier
+     * @param string $basedn The base dn to search
+     * @param string $searchfilter Eg. samaccountname=%s
+     * @return resource
+     */
     protected function search($conn, $basedn, $searchfilter)
     {
         return ldap_search($conn, $basedn, $searchfilter);
     }
     
+    /**
+     * Get values from the directory keyed by $attrib
+     * 
+     * @see firstEntry()
+     * 
+     * @param resource $conn Link identifier
+     * @param resource $entry An entry from the directory
+     * @param string $attrib
+     * @return array
+     */
     protected function getValues($conn, $entry, $attrib)
     {
         return ldap_get_values($conn, $entry, $attrib);
     }
     
+    /**
+     * Get the first entry from a search result
+     * 
+     * @param resource $conn Link identifier
+     * @param resource $resource Result identifier
+     * @return resource
+     */
     protected function firstEntry($conn, $resource)
     {
         return ldap_first_entry($conn, $resource);
     }
     
+    /**
+     * Get the DN from a returned result
+     * 
+     * @param resrouce $conn Link identifier
+     * @param  $first The first entry returned
+     * @return string
+     */
     protected function getUserDn($conn, $first)
     {
         return ldap_get_dn($conn, $first);
     }
     
+    /**
+     * Get the DN parts
+     * 
+     * @param string $dn
+     * @param ing $with_attrib
+     * @return array
+     */
     protected function explodeDn($dn, $with_attrib)
     {
         return explode_dn($dn, $with_attrib);
     }
     
+    /**
+     * Disconnect from the server
+     * 
+     * @param resource $conn Link identifier
+     * @return boolean
+     */
     protected function unbind($conn)
     {
         return ldap_unbind($conn);
