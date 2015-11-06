@@ -166,6 +166,7 @@ class Ldap implements AdapterInterface {
     }
     
     /**
+     * Username is not required because we use a dn to look it up.
      * 
      * {@inheritDoc}
      * @see \Vespula\Auth\Adapter\AdapterInterface::lookupUserData()
