@@ -8,6 +8,7 @@
     }],
     "license": "MIT",
     "keywords": ["authentication", "sql", "ldap"],
+    "homepage": "https://bitbucket.org/jelofson/vespula.auth",
     "require": {
         "php": ">=5.4"
     },
