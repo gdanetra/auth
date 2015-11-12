@@ -4,11 +4,21 @@ A simple, flexible authentication class that is easy to set up and understand.
 
 Exceptions may be thrown so you will likely want to catch them using a `try catch` block.
 
-Exceptions should only be through due to incorrect configuration or server issues, etc. Exceptions are not thrown when the authentication fails due to bad username and password.
+Exceptions should only be thrown due to incorrect configuration or server issues, etc. Exceptions are not thrown when the authentication fails due to bad username and password.
 
-### Installation ###
+## Table of Contents ##
 
-Clone or download and make available as you see fit. It's PSR-4 compliant so you can reference the source folder in a composer.json folder, for example. No packagist yet.
+* [Installation](#markdown-header-installation)
+* [Usage](#markdown-header-usage)
+* [Adapters](#markdown-header-adapters)
+    * [Text Adapter](#markdown-header-text-adapter)
+    * [Sql Adapter](#markdown-header-sql-adapter)
+    * [LDAP Adapter](#markdown-header-ldap-adapter) (with and without a known user DN)
+
+
+## Installation ##
+
+Clone or download and make available as you see fit. It's PSR-4 compliant so you can reference the source folder in a composer.json folder, for example. 
 
 ```
 // example composer.json
@@ -21,7 +31,10 @@ Clone or download and make available as you see fit. It's PSR-4 compliant so you
 }
 ```
 
-### Usage ###
+Or via composer via `composer require vespula/auth`. Coming soon.
+
+
+## Usage ##
 
 ```
 <?php
@@ -29,49 +42,61 @@ require '/your/autoloader.php'; // composer for example
 
 $session = new \Vespula\Auth\Session\Session();
 
-// Optionally pass and idle maximum time and time until expire (in seconds)
-// $session = new \Vespula\Auth\Session\Session(1200, 3600);
+// Optionally pass a maximum idle time and a time until the session expires (in seconds)
+$max_idle = 1200;
+$expire = 3600;
+$session = new \Vespula\Auth\Session\Session($max_idle, $expire);
 
-$adapter = new \Vespula\Auth\Adapter\Xyz(...);
+$adapter = new \Vespula\Auth\Adapter\Xyz(...); // Sql, for example
 
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
-if ($something...) {
-    // filter these first
+if (login condition) {
+    // filter/sanitize these first
     $credentials = [
         'username'=>$_POST['username'],
         'password'=>$_POST['password']
     ];
+
+    // The credentials are passed as an array. This helps 'hide' them if an exception is thrown. Even in development environments.
     $auth->login($credentials);
     if ($auth->isValid()) {
         // Yay....
         echo "Welome " . $auth->getUsername();
+        
         // Get userdata
         $userdata = $auth->getUserdata();
         echo $userdata['fullname'];
+
         // Shortcut to userdata
         echo $auth->getUserdata('fullname');
     } else {
         // Nay....
         // Wonder why? Any errors?
-        $error = $adapter->getError(); // may be no errors. Just bad creds
+        $error = $adapter->getError(); // may be no errors. Just bad credentials
         echo "Please try again, if you dare";
     }
 }
 
-if ($something...) {
+// Perform a log out
+if (logout condition) {
     $auth->logout();
 }
- 
+
+// Check if the user is valid (authenticated) 
 if ($auth->isValid()) {
     // Access some part of site
 }
 
+// Has the person been sitting idle too long?
 if ($auth->isIdle()) {
     // Sitting around for too long
     // User is automatically logged out and status set to ANON
 }
  
+// Did the expire time get reached?
+// Note that if the session actually expires, this won't show as being expired.
+// This is because there is no status in a non-existent session.
 if ($auth->isExpired()) {
     // Sitting around way too long!
     // User is automatically logged out and status set to ANON
