@@ -51,6 +51,7 @@ $adapter = new \Vespula\Auth\Adapter\Xyz(...); // Sql, for example
 
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
+// login condition could be if a $_POST['someval'] is true or whatever
 if (login condition) {
     // filter/sanitize these first
     $credentials = [
@@ -78,7 +79,7 @@ if (login condition) {
     }
 }
 
-// Perform a log out
+// Perform a log out. For example, if isset($_GET['logout'] && $_GET['logout'] == '1')
 if (logout condition) {
     $auth->logout();
 }
@@ -101,6 +102,16 @@ if ($auth->isExpired()) {
     // Sitting around way too long!
     // User is automatically logged out and status set to ANON
 }
+
+// Access to user data
+$username = $auth->getUsername();
+
+$userdata = $auth->getUserdata(); // varies by adapter
+
+// get a specific key from the $userdata array (assuming it exists in the array)
+$email = $auth->getUserdata('email');
+
+
 ```
 
 ## Adapters ##
@@ -115,6 +126,8 @@ $session = new \Vespula\Auth\Session\Session();
 
 $adapter = new \Vespula\Auth\Adapter\Text();
 $adapter->setPassword('juser', 's3cr3t_passwd');
+
+// This data is returned by the getUserdata() method
 $adapter->setUserdata('juser', [
     'fullname'=>'Joe User',
     'email'=>'juser@vespula.com'
@@ -172,6 +185,7 @@ $dsn = 'mysql:dbname=mydatabase;host=localhost';
 $pdo = new \Pdo($dsn, 'dbuser', '********');
 
 // $cols array must have a 'username' and 'password' element. You can use an alias if needed. See below.
+// This data (except username and password) will populate the `getUserdata()` array
 $cols = [
     'username', 
     'bcryptpass'=>'password', // alias
@@ -228,6 +242,7 @@ $ldap_options = [
 ];
 
 // No support for aliases yet.
+// These attributes populate the `getUserdata()` array.
 $attributes = [
     'email',
     'givenname'
