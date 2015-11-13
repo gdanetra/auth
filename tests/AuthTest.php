@@ -1,9 +1,12 @@
 <?php
 namespace Vespula\Auth;
 
+include 'Session/MockSession.php';
+
 use \Vespula\Auth\Auth;
 use \Vespula\Auth\Adapter\Text;
-use \Vespula\Auth\Session\MockSession;
+
+
 
 class AuthTest extends \PHPUnit_Framework_TestCase {
 	
@@ -15,7 +18,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase {
 	public function setUp()
 	{
 		
-		$this->session = new MockSession();
+		$this->session = new \Vespula\Auth\Session\MockSession();
 		
 
 		$this->adapter = new Text();

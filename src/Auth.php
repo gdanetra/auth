@@ -158,8 +158,11 @@ class Auth {
     public function getUserdata($key = null)
     {
         $userdata = $this->session->getUserdata();
-        if ($key && array_key_exists($key, $userdata)) {
-            return $userdata[$key];
+        if ($key) {
+            if (array_key_exists($key, $userdata)) {
+                return $userdata[$key];
+            }
+            return null;
         }
         return $this->session->getUserdata();
     }
