@@ -18,7 +18,7 @@ Exceptions should only be thrown due to incorrect configuration or server issues
 
 ## Installation ##
 
-Clone or download and make available as you see fit. It's PSR-4 compliant so you can reference the source folder in a composer.json folder, for example. 
+`composer require vespula/auth`
 
 ```
 // example composer.json
