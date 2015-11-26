@@ -101,6 +101,24 @@ class Auth {
     }
     
     /**
+     * 
+     * @return AdapterInterface
+     */
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
+    
+    /**
+     * 
+     * @return SessionInterface
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+    
+    /**
      * Login using the adapter's authenticate method
      * 
      * @param array $credentials Array with keys `username` and `password`.
