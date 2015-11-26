@@ -113,7 +113,7 @@ class Auth {
      * 
      * @return SessionInterface
      */
-    public function getAdapter()
+    public function getSession()
     {
         return $this->session;
     }
