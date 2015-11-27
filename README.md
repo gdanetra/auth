@@ -238,7 +238,8 @@ $session = new \Vespula\Auth\Session\Session();
 $uri = 'ldap.mycompany.org'; 
 $dn = 'cn=%s,OU=Users,OU=MyCompany,OU=Edmonton,OU=Alberta'; //%s replaced by username internally
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
@@ -296,7 +297,8 @@ $bind_options = [
 
 
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
