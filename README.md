@@ -291,8 +291,10 @@ $bind_options = [
     'basedn'=>'OU=MyCompany,OU=Edmonton,OU=Alberta',
     'binddn'=>'cn=specialuser,OU=MyCompany,OU=Edmonton,OU=Alberta',
     'bindpw'=>'********',
-    'filter'=>'samaccountname=%s' // what do we use to find the person in Active Directory?
+    'filter'=>'cn=%s' // How to find the particular user in the base dn
 ];
+
+
 $ldap_options = [
     LDAP_OPT_PROTOCOL_VERSION=>3
 ];
