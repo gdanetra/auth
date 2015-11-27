@@ -47,6 +47,9 @@ class Session implements SessionInterface {
      */
     public function __construct($idle = null, $expire = null)
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) { 
+            session_start(); 
+        }
         $this->key = __CLASS__;
         
         if (! isset($_SESSION[$this->key])) {
