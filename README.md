@@ -195,7 +195,7 @@ $cols = [
 $from = 'user';
 $where = 'active=1'; // optional
 
-$adapter = new \Vespula\Auth\Adapter\Sql($pdo, $cols, $from, $where);
+$adapter = new \Vespula\Auth\Adapter\Sql($pdo, $from, $cols, $where);
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
 if ('login button pushed logic') {
