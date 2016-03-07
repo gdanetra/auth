@@ -1,5 +1,7 @@
 .buildpath
 .settings
 .project
+nbproject
 composer.lock
 vendor
+/nbproject/private/

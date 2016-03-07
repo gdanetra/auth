@@ -411,7 +411,7 @@ class Ldap implements AdapterInterface {
      */
     protected function explodeDn($dn, $with_attrib)
     {
-        return explode_dn($dn, $with_attrib);
+        return ldap_explode_dn($dn, $with_attrib);
     }
     
     /**

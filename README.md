@@ -195,7 +195,7 @@ $cols = [
 $from = 'user';
 $where = 'active=1'; // optional
 
-$adapter = new \Vespula\Auth\Adapter\Sql($pdo, $cols, $from, $where);
+$adapter = new \Vespula\Auth\Adapter\Sql($pdo, $from, $cols, $where);
 $auth = new \Vespula\Auth\Auth($adapter, $session);
 
 if ('login button pushed logic') {
@@ -238,7 +238,8 @@ $session = new \Vespula\Auth\Session\Session();
 $uri = 'ldap.mycompany.org'; 
 $dn = 'cn=%s,OU=Users,OU=MyCompany,OU=Edmonton,OU=Alberta'; //%s replaced by username internally
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
@@ -291,10 +292,13 @@ $bind_options = [
     'basedn'=>'OU=MyCompany,OU=Edmonton,OU=Alberta',
     'binddn'=>'cn=specialuser,OU=MyCompany,OU=Edmonton,OU=Alberta',
     'bindpw'=>'********',
-    'filter'=>'samaccountname=%s' // what do we use to find the person in Active Directory?
+    'filter'=>'cn=%s' // How to find the particular user in the base dn
 ];
+
+
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
