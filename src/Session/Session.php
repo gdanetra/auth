@@ -54,8 +54,8 @@ class Session implements SessionInterface {
                     'status'=>null,
                     'timestamp'=>time(),
                     'username'=>null,
-                    'userdata'=>null,
-            		'interval'=>0
+                    'userdata'=>[],
+            	    'interval'=>0
             ];
         }
         $this->store =& $_SESSION[$this->key];

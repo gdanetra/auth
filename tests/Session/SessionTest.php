@@ -24,7 +24,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
     {
         $this->assertNull($this->session->getStatus());
         $this->assertNull($this->session->getUsername());
-        $this->assertNull($this->session->getUserdata());
+        $this->assertEmpty($this->session->getUserdata());
     }
     
     public function testSetGetUsername()
