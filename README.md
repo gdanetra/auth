@@ -1,5 +1,7 @@
 # README #
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/279a5fc8bb16418c97763f41599a95a1)](https://www.codacy.com/app/jon-elofson/vespula-auth?utm_source=jelofson@bitbucket.org&amp;utm_medium=referral&amp;utm_content=jelofson/vespula.auth&amp;utm_campaign=Badge_Grade)
+
 A simple, flexible authentication class that is easy to set up and understand.
 
 Exceptions may be thrown so you will likely want to catch them using a `try catch` block.
