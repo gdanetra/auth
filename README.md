@@ -1,5 +1,7 @@
 # README #
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/279a5fc8bb16418c97763f41599a95a1)](https://www.codacy.com/app/jon-elofson/vespula-auth?utm_source=jelofson@bitbucket.org&amp;utm_medium=referral&amp;utm_content=jelofson/vespula.auth&amp;utm_campaign=Badge_Grade)
+
 A simple, flexible authentication class that is easy to set up and understand.
 
 Exceptions may be thrown so you will likely want to catch them using a `try catch` block.
@@ -238,7 +240,8 @@ $session = new \Vespula\Auth\Session\Session();
 $uri = 'ldap.mycompany.org'; 
 $dn = 'cn=%s,OU=Users,OU=MyCompany,OU=Edmonton,OU=Alberta'; //%s replaced by username internally
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
@@ -291,10 +294,13 @@ $bind_options = [
     'basedn'=>'OU=MyCompany,OU=Edmonton,OU=Alberta',
     'binddn'=>'cn=specialuser,OU=MyCompany,OU=Edmonton,OU=Alberta',
     'bindpw'=>'********',
-    'filter'=>'samaccountname=%s' // what do we use to find the person in Active Directory?
+    'filter'=>'cn=%s' // How to find the particular user in the base dn
 ];
+
+
 $ldap_options = [
-    LDAP_OPT_PROTOCOL_VERSION=>3
+    LDAP_OPT_PROTOCOL_VERSION=>3,
+    LDAP_OPT_REFERRALS=>0
 ];
 
 // No support for aliases yet.
