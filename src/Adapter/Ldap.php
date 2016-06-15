@@ -257,9 +257,13 @@ class Ldap implements AdapterInterface {
      */
     protected function findDn($conn, $username, $bind_options)
     {
-
         $dn = false;
-        extract($bind_options);
+        
+        // rather than use extract, make this explicit.
+        $binddn = $bind_options['binddn'];
+        $bindpw = $bind_options['bindpw'];
+        $basedn = $bind_options['basedn'];
+        $filter = $bind_options['filter'];
 
         $bind = $this->bind($conn, $binddn, $bindpw);
         if (! $bind) {

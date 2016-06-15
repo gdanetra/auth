@@ -140,7 +140,7 @@ class Auth {
             $this->session->setUsername($credentials['username']);
             
             // Set userdata
-            $this->session->setUserdata($this->adapter->lookupUserData($credentials['username']));    
+            $this->session->setUserdata($this->adapter->lookupUserData($credentials['username']));
         } else {
             // Make sure the user is not valid if they tried to login and creds were wrong.
             $this->logout();
@@ -175,7 +175,7 @@ class Auth {
      */
     public function getUserdata($key = null)
     {
-        $userdata = $this->session->getUserdata();
+        $userdata = (array) $this->session->getUserdata();
         if ($key) {
             if (array_key_exists($key, $userdata)) {
                 return $userdata[$key];

@@ -54,7 +54,9 @@ class Text implements AdapterInterface {
      */
     public function authenticate(array $credentials)
     {
-        extract($credentials);
+        // explicit vs `extract`
+        $username = $credentials['username'];
+        $password = $credentials['password'];
         
         if (! isset($this->passwords[$username])) {
             $this->error = Text::ERROR_NO_USER;
